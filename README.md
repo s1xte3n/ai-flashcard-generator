@@ -229,3 +229,7 @@ Follow it, and you won't just ship projects — you'll build engineering discipl
 **Future you will thank you.**
 
 Happy shipping 🚀
+
+![CI](https://github.com/s1xte3n/ai-flashcard-generator/actions/workflows/ci.yml/badge.svg)
+
+![Vibe Coder Banner](https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif)
