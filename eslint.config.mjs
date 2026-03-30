@@ -6,6 +6,14 @@ import reactHooksPlugin from "eslint-plugin-react-hooks";
 import babelParser from "@babel/eslint-parser";
 
 export default [
+  {
+    ignores: [
+      "**/node_modules/**",
+      "**/venv/**",
+      "**/.venv/**",
+      "apps/backend/uploads/**"
+    ]
+  },
   // Node backend
   {
     files: ["apps/backend/**/*.js", "apps/backend/**/*.mjs"],
