@@ -22,37 +22,28 @@ export default function UploadForm({ onGenerated, setIsGenerating }) {
   const handleUpload = async (e) => {
     e.preventDefault();
     setError('');
-    
     if (!file) {
       setError('Please select a PDF file');
       return;
     }
-    
     if (!examName.trim()) {
       setError('Please enter an exam name');
       return;
     }
-
     setIsGenerating(true);
-    
     try {
       log('UPLOAD_START', file.name);
       setProgress({ step: 'upload', message: 'Uploading PDF...' });
-      
       const uploadResult = await api.uploadPdf(file);
       log('UPLOAD_SUCCESS', `upload_id: ${uploadResult.upload_id}`);
       setUploadId(uploadResult.upload_id);
-      
       setProgress({ step: 'chapters', message: 'Detecting chapters...' });
       log('GET_CHAPTERS', 'Fetching chapter list from PDF');
-      
       const chaptersData = await api.getChapters(uploadResult.upload_id);
       log('CHAPTERS_FOUND', `${chaptersData.chapters.length} chapters detected`);
-      
       setChapters(chaptersData.chapters);
       setProgress(null);
       setView('chapters');
-      
     } catch (err) {
       log('ERROR', err.message || 'Unknown error');
       setError(err.message || 'Upload failed');
@@ -61,42 +52,34 @@ export default function UploadForm({ onGenerated, setIsGenerating }) {
       setIsGenerating(false);
     }
   };
-
   const handleGenerateChapter = async (chapterId) => {
     setError('');
     setIsGenerating(true);
     setSelectedChapter(chapterId);
-    
     try {
       const chapter = chapters.find(c => c.id === chapterId);
       log('CHAPTER_START', `"${chapter.title}" (pages ${chapter.start_page}-${chapter.end_page})`);
       setProgress({ step: 'generating', message: `Generating flashcards for: ${chapter.title}...` });
-      
       const result = await api.generateChapter(
         uploadId,
         examName,
         chapterId,
         maxCards
       );
-      
       log('CHAPTER_COMPLETE', `Generated ${result.flashcards.length} flashcards`);
       log('DEDUPLICATION', `Removed ${result.duplicates_removed} duplicates`);
-      
       const newCards = result.flashcards.map((card, idx) => ({
         ...card,
         topic: chapter.title,
         id: `${chapterId}-${idx}`
       }));
-      
       setAllFlashcards(prev => [...prev, ...newCards]);
       setGeneratedChapterIds(prev => new Set(prev).add(chapterId));
       setProgress(null);
-      
       onGenerated([...allFlashcards, ...newCards], {
         processed: result.total_processed,
         duplicates: result.duplicates_removed,
       });
-      
     } catch (err) {
       log('ERROR', err.message || 'Unknown error');
       setError(err.message || 'Generation failed');
@@ -105,12 +88,10 @@ export default function UploadForm({ onGenerated, setIsGenerating }) {
       setSelectedChapter(null);
     }
   };
-
   const handleNextChapter = () => {
     setError('');
     setView('chapters');
   };
-
   const handleStartOver = () => {
     setFile(null);
     setUploadId(null);
@@ -123,11 +104,9 @@ export default function UploadForm({ onGenerated, setIsGenerating }) {
     setProgress(null);
     onGenerated([], { processed: 0, duplicates: 0 });
   };
-
   if (view === 'chapters') {
     const remainingChapters = chapters.filter(c => !generatedChapterIds.has(c.id));
     const currentChapter = chapters.find(c => c.id === selectedChapter);
-    
     return (
       <div className="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
         <div className="flex justify-between items-center mb-4">
@@ -139,20 +118,17 @@ export default function UploadForm({ onGenerated, setIsGenerating }) {
             Start Over
           </button>
         </div>
-        
         {error && (
           <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">
             {error}
           </div>
         )}
-        
         {progress && progress.step === 'generating' && (
           <div className="bg-blue-50 text-blue-700 p-3 rounded mb-4 text-sm flex items-center">
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-700 mr-2"></div>
             {progress.message}
           </div>
         )}
-        
         {currentChapter && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
             <h3 className="font-semibold text-green-800 mb-2">Generated: {currentChapter.title}</h3>
@@ -167,14 +143,12 @@ export default function UploadForm({ onGenerated, setIsGenerating }) {
             </button>
           </div>
         )}
-        
         <div className="mb-4">
           <p className="text-sm text-gray-600 mb-2">
             Total flashcards: <strong>{allFlashcards.length}</strong> | 
             Chapters completed: <strong>{generatedChapterIds.size}</strong>/<strong>{chapters.length}</strong>
           </p>
         </div>
-        
         {remainingChapters.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-gray-600 mb-4">All chapters completed!</p>
@@ -198,7 +172,6 @@ export default function UploadForm({ onGenerated, setIsGenerating }) {
             {chapters.map((chapter) => {
               const isGenerated = generatedChapterIds.has(chapter.id);
               const isSelected = selectedChapter === chapter.id;
-              
               return (
                 <div
                   key={chapter.id}
@@ -237,24 +210,20 @@ export default function UploadForm({ onGenerated, setIsGenerating }) {
       </div>
     );
   }
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
-      <h2 className="text-xl font-semibold mb-4">Upload PDF Textbook</h2>
-      
+      <h2 className="text-xl font-semibold mb-4">Upload PDF Textbook</h2>   
       {error && (
         <div className="bg-red-50 text-red-600 p-3 rounded mb-4 text-sm">
           {error}
         </div>
       )}
-      
       {progress && progress.step !== 'complete' && (
         <div className="bg-blue-50 text-blue-700 p-3 rounded mb-4 text-sm flex items-center">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-700 mr-2"></div>
           {progress.message}
         </div>
       )}
-      
       <form onSubmit={handleUpload}>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -272,7 +241,6 @@ export default function UploadForm({ onGenerated, setIsGenerating }) {
             className="w-full p-2 border border-gray-300 rounded text-sm"
           />
         </div>
-        
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Exam Name / Code
@@ -285,7 +253,6 @@ export default function UploadForm({ onGenerated, setIsGenerating }) {
             className="w-full p-2 border border-gray-300 rounded text-sm"
           />
         </div>
-        
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Max Cards per Chapter: {maxCards}
@@ -299,7 +266,6 @@ export default function UploadForm({ onGenerated, setIsGenerating }) {
             className="w-full"
           />
         </div>
-        
         <button
           type="submit"
           className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors text-sm font-medium"
