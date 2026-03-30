@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "dev:frontend": "cd apps/frontend && npm install && npm run dev",
-        "dev:backend": "cd apps/backend && npm install && npm run dev",
+        "dev:backend": "cd apps/backend && python -m venv venv && venv/Scripts/pip install -r requirements.txt && venv/Scripts/uvicorn app.main:app --reload",
         "lint": "npx eslint .",
         "lint:fix": "npx eslint . --fix",
         "format": "npx prettier --write .",

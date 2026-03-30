@@ -1,0 +1,21 @@
+# Secrets
+.env
+*.env
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+**/node_modules/
+
+# App runtime artifacts
+*.log
+apps/backend/backend.log
+
+# Uploaded/source documents (do not commit)
+apps/backend/uploads/
+*.pdf

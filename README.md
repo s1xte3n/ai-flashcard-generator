@@ -1,3 +1,122 @@
+# 🧠 AI Flashcard Generator
+
+> Generate exam-focused flashcards from PDF textbooks using local LLMs. 100% free, no accounts, no data leaves your machine.
+
+---
+
+## ⚡ Quick Start
+
+### Prerequisites
+- **Python 3.11+**
+- **Node.js 18+**
+- **Ollama** installed + model pulled:
+  ```bash
+  ollama pull mistral:7b
+  ```
+
+### Installation & Run
+
+```bash
+# Frontend
+cd apps/frontend
+npm install
+npm run dev
+
+# Backend (new terminal)
+cd apps/backend
+python -m venv venv
+venv/Scripts/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+### Access
+- Frontend: http://localhost:5173
+- API: http://localhost:8000
+- API Docs: http://localhost:8000/docs
+
+---
+
+## ✨ Features
+- PDF upload (textbooks, notes, chapters)
+- Exam-focused flashcard generation
+- Local AI (Ollama + Mistral/LLaMA)
+- Flip card review interface
+- Export to CSV (Anki-compatible) or PDF
+- No accounts, session-based
+
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React (Vite) + Tailwind CSS |
+| Backend | Python (FastAPI) |
+| PDF | pdfplumber |
+| AI | Ollama + Mistral 7B |
+| NLP | scikit-learn (TF-IDF) |
+
+---
+
+## 📁 Project Structure
+
+```
+ai-flashcard-generator/
+├── apps/
+│   ├── frontend/         # React + Vite
+│   └── backend/          # FastAPI + Python
+├── .github/              # CI workflows
+├── .husky/               # Pre-commit hooks
+├── docs/                 # Architecture docs
+├── scripts/              # Automation
+├── .env.example
+├── package.json
+└── requirements.txt
+```
+
+---
+
+## 🔧 Configuration
+
+Copy `.env.example` to `.env`:
+
+```env
+OLLAMA_URL=http://localhost:11434/api/generate
+OLLAMA_MODEL=mistral:7b
+MAX_CARDS=50
+CHUNK_TOKENS=1000
+DEDUPLICATION_THRESHOLD=0.85
+```
+
+---
+
+## 📦 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/upload` | Upload PDF file |
+| POST | `/api/generate` | Generate flashcards |
+| GET | `/api/export/csv` | Export as CSV |
+| GET | `/api/export/pdf` | Export as PDF |
+
+---
+
+## 🧠 How It Works
+1. **Extract** - PDF text via pdfplumber
+2. **Chunk** - ~1000 tokens with overlap
+3. **Generate** - Local LLM creates Q/A pairs
+4. **Deduplicate** - TF-IDF similarity removal
+5. **Review** - Flip cards in browser
+6. **Export** - Download for Anki or print
+
+---
+
+## 📄 License
+MIT
+
+---
+
 # 🧠 Vibe Coder Template
 
 > A clean, modern GitHub template for building, reviewing, shipping, and scaling software **the right way**.
